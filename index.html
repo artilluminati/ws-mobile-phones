@@ -19,8 +19,41 @@
         </div>
     </nav>
 
-    <div class="modal-cart">
-        
+    <div class="modalBackground">
+        <div class="modalActive">
+            <div class="modalClose">
+                &#x2716;
+            </div>
+            <div class="modalWindow">
+                
+            </div>
+        </div>
+      </div>
+      <!-- <div class="col-4 card">
+        <img src="img/1.jpg" alt="">
+        <div class="card-info">
+            <span class="title">
+                Название телефона
+            </span>
+            <div>
+                <div class="price-wrap">
+                    <span class="price-old">3 200 ₽</span>
+                    <span class="price-discount">3 200 ₽</span>
+                </div>
+                <div class="cartElemInfo">
+                    <div class="cei-number">
+                        1
+                    </div>
+                    <div class="cei-minus-number" onclick="cartMinus(0)">
+                        -
+                    </div>
+                    <div class="cei-plus-number" onclick="cartPlus(0)">
+                        +
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
     </div>
     <div class="container sortings">
         <a id="desc-sort-btn">По дате появления ↑</a>
@@ -67,6 +100,7 @@
         </div>
         <div class="filters col-2">
             <span class="title-heading">Фильтры</span>
+            <input type="text" id="f-search" style="margin-top: 30px;max-width: 100%;" placeholder="Поиск">
             <div class="filter" id="f-price">
                 <span class="filter-title">Цена</span>
                 <div class="filter-num">
