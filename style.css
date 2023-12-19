@@ -59,6 +59,15 @@ nav{
     user-select: none;
 }
 
+.sortings{
+    display: flex;
+    font-size: 14px;
+    /* width: calc(8 * var(--col)); */
+}
+.sortings a{
+    padding: 10px;
+}
+
 nav > .container{
     display: flex;
     justify-content: space-between;

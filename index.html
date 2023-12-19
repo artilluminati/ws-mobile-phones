@@ -20,9 +20,14 @@
     </nav>
 
     <div class="modal-cart">
-
+        
     </div>
-
+    <div class="container sortings">
+        <a id="desc-sort-btn">По дате появления ↑</a>
+        <a id="asc-sort-btn">По дате появления ↓</a>
+        <a id="ascPrice-sort-btn">По цене ↑</a>
+        <a id="descPrice-sort-btn">По цене ↓</a>
+    </div>
     <div class="container wrap">
         <div class="cards">
             <div class="col-4 card">
@@ -90,15 +95,15 @@
                 <span class="filter-title">Производители</span>
                 <div>
                     <div>
-                        <input type="checkbox" id="f-manufacturer-1" class="manufacturers-elem">
+                        <input type="checkbox" id="f-manufacturer-1" class="manufacturers-elem" data-ftitle="DEXP">
                         <label for="f-manufacturer-1">DEXP</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="f-manufacturer-2">
+                        <input type="checkbox" id="f-manufacturer-2" class="manufacturers-elem" data-ftitle="Samsung">
                         <label for="f-manufacturer-2">Samsung</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="f-manufacturer-3">
+                        <input type="checkbox" id="f-manufacturer-3" class="manufacturers-elem" data-ftitle="POCO">
                         <label for="f-manufacturer-3">POCO</label>
                     </div>
                 </div>
@@ -113,7 +118,7 @@
                 </div>
             </div>
             <!-- <div class="apply-btn" onclick="applyFilters()"> -->
-                <div class="apply-btn">
+            <div class="apply-btn">
                 Применить
             </div>
             <!-- <div class="reset-btn" onclick="resetFilters()"> -->

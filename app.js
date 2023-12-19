@@ -37,6 +37,31 @@ var prods = [
     }
 ]
 
+var manufacturersList = [
+    {
+        title: "DEXP",
+        checked: true
+    },
+    {
+        title: "Samsung",
+        checked: true
+    },
+    {
+        title: "POCO",
+        checked: true
+    }
+]
+
+var sortOrderList = {
+    selected: 0,
+    list:[
+        'asc',
+        'desc',
+        'ascPrice',
+        'descPrice'
+    ]
+}
+
 cart = {
 
 }
@@ -70,7 +95,7 @@ function decodeHtml(html) {
 //     let priceFrom = document.getElementById('f-price-from').value;
 //     let priceTo = document.getElementById('f-price-to').value;
 
-//     console.log(priceFrom);
+//     // console.log(priceFrom);
 
 //     let romFrom = document.getElementById('f-rom-from').value;
 //     let romTo = document.getElementById('f-rom-to').value;
@@ -106,7 +131,7 @@ function decodeHtml(html) {
 //         withDiscount: withDiscount
 //     };
 
-//     console.log(filterData);
+//     // console.log(filterData);
     
 //     // Convert the object to JSON and store it in localStorage
 //     localStorage.setItem('filters', JSON.stringify(filterData));
@@ -150,6 +175,20 @@ function decodeHtml(html) {
 //     localStorage.setItem('filters', filterData);
 // };
 
+function sortProducts(products, order) {
+    if (order === "asc") {
+        return products.sort((a, b) => getDiscount(a.price, a.discount) - getDiscount(b.price, b.discount));
+    } else if (order === "desc") {
+        return products.sort((a, b) => getDiscount(b.price, b.discount) - getDiscount(a.price, a.discount));
+    } else if (order === "asc") {
+        return products.slice().sort((a, b) => products.indexOf(a) - products.indexOf(b));
+    } else if (order === "desc") {
+        return products.slice().sort((a, b) => products.indexOf(b) - products.indexOf(a));
+    } else {
+        return products;
+    }
+}
+
 function getDiscount(price, discount){
     if (discount !== ""){
         return parseInt((parseInt(price) * (100 - parseInt(discount))) / 100);
@@ -158,6 +197,10 @@ function getDiscount(price, discount){
         return parseInt(price);
     }
 }
+
+function removeChecked(list) {
+    return list.filter(item => !item.checked);
+  }
 
 function filter(data, filtersData) {
 
@@ -190,19 +233,29 @@ function filter(data, filtersData) {
     document.getElementById('f-ram-to').setAttribute('min', minRam);
     document.getElementById('f-ram-to').setAttribute('max', maxRam);
 
+    
+    let inputs = document.querySelectorAll('.manufacturers-elem');
+
+    inputs.forEach((input, index) => {
+        input.checked = filtersData.manufacturer[index].checked;
+    });
+
+    document.getElementById('f-discount-check').checked = filtersData.withDiscount;
+    
+
     let filteredData = data.filter(item => {
         
         // price = item.discount !== "" ? (parseInt(item.price) + parseInt(item.price) * parseInt(item.discount) / 100) : "";
         
-        // console.log(price);
+        // // console.log(price);
 
         calcPrice = getDiscount(item.price, item.discount)
 
         // цена
         if (filtersData.price.from && filtersData.price.to) {
             if (calcPrice < filtersData.price.from || calcPrice > filtersData.price.to) {
-                console.log(item.title);
-                console.log(item.price);
+                // console.log(item.title);
+                // console.log(item.price);
                 return false;
             }
         }
@@ -211,8 +264,8 @@ function filter(data, filtersData) {
         
         if (filtersData.rom.from && filtersData.rom.to) {
             if (parseInt(item.rom) < filtersData.rom.from || parseInt(item.rom) > filtersData.rom.to) {
-                console.log(item.title);
-                console.log(item.rom);
+                // console.log(item.title);
+                // console.log(item.rom);
                 return false;
             }
         }
@@ -220,8 +273,8 @@ function filter(data, filtersData) {
         //   опер. память
         if (filtersData.ram.from && filtersData.ram.to) {
             if (parseInt(item.ram) < filtersData.ram.from || parseInt(item.ram) > filtersData.ram.to) {
-                console.log(item.title);
-                console.log(item.ram);
+                // console.log(item.title);
+                // console.log(item.ram);
                 return false;
             }
         }
@@ -239,22 +292,41 @@ function filter(data, filtersData) {
         // if (manufacturer3 && item.manufacturer === "POCO") {
         //     return true;
         // }
-        
-        // фильтр скидки
-        if (filtersData.withDiscount && filtersData.withDiscount != item.discount) {
+
+
+        checkedManufacturer = false;
+
+        removeChecked(filtersData.manufacturer).forEach(elem => {
+            console.log(item.manufacturer);
+            console.log(elem.title);
+            console.log('\n')
+            if (String(item.manufacturer) == String(elem.title)){
+                console.log('if');
+                checkedManufacturer = true;
+            }
+        });
+
+        if(checkedManufacturer){
             return false;
         }
-        console.log(item.title);
+
+
+        
+        // фильтр скидки
+        if (filtersData.withDiscount && item.discount == "") {
+            return false;
+        }
+        // console.log(item.title);
         return true;
         });
 
 
-        // console.log(filteredData)
+        // // console.log(filteredData)
         return filteredData;
   }
 
 
-function showProds(isClear){
+function showProds(){
 
     var notObject = false;
     try {
@@ -262,18 +334,20 @@ function showProds(isClear){
       if (JSON.stringify(filters).includes('null')) {
         notObject = true;
       }
-      console.log(filters);
+    //   // console.log(filters);
     } catch {
       notObject = true;
     }
 
-    if (notObject || isClear){
+    if (notObject){
         clearFilterData();
-        console.log('cleared filter data');
-        console.log(JSON.parse(localStorage.getItem('filters')));
+        // console.log('cleared filter data');
+        // console.log(JSON.parse(localStorage.getItem('filters')));
     }
 
     filtersData = JSON.parse(localStorage.getItem('filters'));
+
+    // console.log(filtersData);
 
     // убрать пустые 
     prodsShowed = prods.filter(function(e){
@@ -281,6 +355,16 @@ function showProds(isClear){
     });
 
     prodsShowed = filter(prods, filtersData)
+    try{
+        sortOrder = JSON.parse(localStorage.getItem('sortOrderList'));
+    }
+    catch{
+        sortOrder = sortOrderList;
+        console.log('default sort');
+    }
+
+    // сортировки списка товаров
+    prodsShowed = sortProducts(prodsShowed, sortOrder)
 
 
     const cardsContainer = document.querySelector('.cards');
@@ -426,7 +510,7 @@ function clearFilterData(){
         }
     }
 
-    console.log(prices);
+    // console.log(prices);
 
     let priceTo = Math.max(...prices.map(elem => parseInt(elem)));
     let priceFrom = Math.min(...prices.map(elem => parseInt(elem)));
@@ -435,14 +519,7 @@ function clearFilterData(){
     let ramTo = Math.max(...prods.map(prod => parseInt(prod.ram)));
     let ramFrom = Math.min(...prods.map(prod => parseInt(prod.ram)));
 
-    var manufacturers = {};
-
-    for (var i = 0; i < prods.length; i++) {
-        var manufacturer = prods[i].manufacturer;
-        if (!manufacturers['manufacturer' + (i+1)]) {
-            manufacturers['manufacturer' + (i+1)] = manufacturer;
-        }
-    }
+    let manufacturers = manufacturersList;
 
     withDiscount = false;
 
@@ -463,7 +540,7 @@ function clearFilterData(){
         withDiscount: withDiscount
     };
 
-    console.log(filterData)
+    // console.log(filterData)
 
     localStorage.setItem('filters', JSON.stringify(filterData));
 }
@@ -481,18 +558,37 @@ function updateFilterData(){
     let ramFrom = document.getElementById('f-ram-from').value;
     let ramTo = document.getElementById('f-ram-to').value;
 
-    var manufacturers = {};
+    var manufacturers = manufacturersList;
 
-    domManufacturers = document.getElementsByClassName('manufacturers-elem');
+    // domManufacturers = document.getElementsByClassName('manufacturers-elem');
 
-    for (var i = 0; i < domManufacturers.length; i++) {
-        var manufacturer = domManufacturers[i].checked;
-        if (!manufacturers['manufacturer' + (i+1)]) {
-            manufacturers['manufacturer' + (i+1)] = manufacturer;
-        }
-    }
+    // for (var i = 0; i < domManufacturers.length; i++) {
+    //     var manufacturer = domManufacturers[i].checked;
+    //     if (!manufacturers['manufacturer' + (i+1)]) {
+    //         manufacturers['manufacturer' + (i+1)] = manufacturer;
+    //     }
+    // }
 
-    withDiscount = document.getElementById('f-discount-check').checked
+    // withDiscount = document.getElementById('f-discount-check').checked
+    
+
+    // try{
+    //     Object.keys(document.getElementsByClassName('manufacturers-elem')).forEach(element => {
+    //         manufacturers.appendChild({ [element.dataset.ftitle]: element.checked});
+    //     });
+    // }
+    // catch{
+    //     manufacturers = manufacturersList;
+    //     console.log("Updateted cleared data");
+    // }
+
+    let inputs = document.querySelectorAll('.manufacturers-elem');
+
+    inputs.forEach((input, index) => {
+        manufacturers[index].checked = input.checked;
+    });
+
+    withDiscount = document.getElementById("f-discount-check").checked;
 
 
     let filterData = {
@@ -512,7 +608,7 @@ function updateFilterData(){
         withDiscount: withDiscount
     };
 
-    
+    console.log(filterData);
 
     localStorage.setItem('filters', JSON.stringify(filterData));
 }
@@ -523,15 +619,50 @@ showProds()
 function applyFilters(){
     updateFilterData()
 
-
     showProds();
 }
 
 function resetFilters(){
-    showProds(true);
+    clearFilterData();
+
+    showProds();
 }
 
 document.addEventListener('DOMContentLoaded', e => {
     document.getElementsByClassName('apply-btn')[0].addEventListener('click', e => applyFilters());
     document.getElementsByClassName('reset-btn')[0].addEventListener('click', e => resetFilters());
+
+
+    document.getElementById('asc-sort-btn').addEventListener('click', e => {
+        localSortOrderList = sortOrderList;
+
+        localSortOrderList.selected = 0;
+
+        localStorage.setItem('sortOrderList', JSON.stringify(localSortOrderList));
+        showProds();
+    });
+    document.getElementById('desc-sort-btn').addEventListener('click', e => {
+        localSortOrderList = sortOrderList;
+
+        localSortOrderList.selected = 1;
+
+        localStorage.setItem('sortOrderList', JSON.stringify(localSortOrderList));
+        showProds();
+    });
+    document.getElementById('ascPrice-sort-btn').addEventListener('click', e => {
+        localSortOrderList = sortOrderList;
+
+        localSortOrderList.selected = 3;
+
+        localStorage.setItem('sortOrderList', JSON.stringify(localSortOrderList));
+        showProds();
+    });
+    document.getElementById('descPrice-sort-btn').addEventListener('click', e => {
+        localSortOrderList = sortOrderList;
+
+        localSortOrderList.selected = 4;
+
+        localStorage.setItem('sortOrderList', JSON.stringify(localSortOrderList));
+        showProds();
+    });
 })
