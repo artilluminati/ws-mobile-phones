@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">Мобильные телефоны</a>
+            <a class="cart-btn">
+                <div class="cart-icon"></div>
+                <span>Корзина</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="modal-cart">
+
+    </div>
+
+    <div class="container wrap">
+        <div class="cards">
+            <div class="col-4 card">
+                <img src="img/1.jpg" alt="">
+                <div class="card-info">
+                    <span class="title">
+                        Название телефона
+                    </span>
+                    <div>
+                        <div class="price-wrap">
+                            <span class="price-old">3 200 ₽</span>
+                            <span class="price-discount">3 200 ₽</span>
+                        </div>
+                        <div class="add-cart">
+                            В корзину
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 card">
+                <img src="img/1.jpg" alt="">
+                <div class="card-info">
+                    <span class="title">
+                        Название телефона
+                    </span>
+                    <div>
+                        <div class="price-wrap">
+                            <span class="price-old">3 200 ₽</span>
+                            <span class="price-discount">3 200 ₽</span>
+                        </div>
+                        <div class="add-cart">
+                            В корзину
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="filters col-2">
+            <span class="title-heading">Фильтры</span>
+            <div class="filter" id="f-price">
+                <span class="filter-title">Цена</span>
+                <div class="filter-num">
+                    <input type="number" id="f-price-from">
+                    <img src="img/-.svg" alt="" class="filter-separator">
+                    <input type="number" id="f-price-to">
+                </div>
+            </div>
+            <div class="filter" id="f-rom">
+                <span class="filter-title">Встроенная память</span>
+                <div class="filter-num">
+                    <input type="number" id="f-rom-from">
+                    <img src="img/-.svg" alt="" class="filter-separator">
+                    <input type="number" id="f-rom-to">
+                </div>
+            </div>
+            <div class="filter" id="f-ram">
+                <span class="filter-title">Оперативная память</span>
+                <div class="filter-num">
+                    <input type="number" id="f-ram-from">
+                    <img src="img/-.svg" alt="" class="filter-separator">
+                    <input type="number" id="f-ram-to">
+                </div>
+            </div>
+            <div class="filter" id="f-manufacturer">
+                <span class="filter-title">Производители</span>
+                <div>
+                    <div>
+                        <input type="checkbox" id="f-manufacturer-1" class="manufacturers-elem">
+                        <label for="f-manufacturer-1">DEXP</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="f-manufacturer-2">
+                        <label for="f-manufacturer-2">Samsung</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="f-manufacturer-3">
+                        <label for="f-manufacturer-3">POCO</label>
+                    </div>
+                </div>
+            </div>
+            <div class="filter" id="f-discount">
+                <span class="filter-title">Показывать товары только со скидкой</span>
+                <div>
+                    <div>
+                        <input type="checkbox" id="f-discount-check">
+                        <label for="f-manufacturer-1">Да</label>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="apply-btn" onclick="applyFilters()"> -->
+                <div class="apply-btn">
+                Применить
+            </div>
+            <!-- <div class="reset-btn" onclick="resetFilters()"> -->
+                <div class="reset-btn" >
+                Сбросить
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+
+</body>
+</html>
