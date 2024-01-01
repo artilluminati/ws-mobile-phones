@@ -1,3 +1,10 @@
+domFilterPriceFrom = document.getElementById('f-price-from');
+domFilterPriceTo =  document.getElementById('f-price-to');
+domFilterRomFrom = document.getElementById('f-rom-from');
+domFilterRomTo =  document.getElementById('f-rom-to');
+domFilterRamFrom = document.getElementById('f-ram-from');
+domFilterRamTo =  document.getElementById('f-ram-to');
+
 var prods = [
     {
         "title": "4&quot; Смартфон DEXP A440 8 ГБ розовый",
@@ -11,7 +18,7 @@ var prods = [
     {
         "title": "Samsung Galaxy M52",
         "price": "40999",
-        "discount": "4%",
+        "discount": "4",
         "manufacturer": "Samsung",
         "ram": "6",
         "rom": "256",
@@ -29,7 +36,7 @@ var prods = [
     {
         "title": "Смартфон POCO F3 Белый",
         "price": "34999",
-        "discount": "6%",
+        "discount": "6",
         "manufacturer": "POCO",
         "ram": "6",
         "rom": "128",
@@ -226,25 +233,13 @@ function filter(data, filtersData) {
 
 
     document.getElementById('f-price-from').value = filtersData.price.from;
-    document.getElementById('f-price-from').setAttribute('min', minPrice);
-    document.getElementById('f-price-from').setAttribute('max', maxPrice);
     document.getElementById('f-price-to').value = filtersData.price.to;
-    document.getElementById('f-price-to').setAttribute('min', filtersData.minPrice);
-    document.getElementById('f-price-to').setAttribute('max', filtersData.maxPrice);
 
     document.getElementById('f-rom-from').value = filtersData.rom.from;
-    document.getElementById('f-rom-from').setAttribute('min', filtersData.minRom);
-    document.getElementById('f-rom-from').setAttribute('max', maxRom);
     document.getElementById('f-rom-to').value = filtersData.rom.to;
-    document.getElementById('f-rom-to').setAttribute('min', minRom);
-    document.getElementById('f-rom-to').setAttribute('max', maxRom);
 
     document.getElementById('f-ram-from').value = filtersData.ram.from;
-    document.getElementById('f-ram-from').setAttribute('min', minRam);
-    document.getElementById('f-ram-from').setAttribute('max', maxRam);
     document.getElementById('f-ram-to').value = filtersData.ram.to;
-    document.getElementById('f-ram-to').setAttribute('min', minRam);
-    document.getElementById('f-ram-to').setAttribute('max', maxRam);
 
     
     let inputs = document.querySelectorAll('.manufacturers-elem');
@@ -386,131 +381,82 @@ function showProds(){
 
     cardsContainer.innerHTML = '';
 
-    let cardId = 0;
-    prodsShowed.forEach(card => {
-        const taskHTML = createTaskHTML(card, cardId);
-        cardsContainer.appendChild(taskHTML);
-
-        cardId++;
+    prodsShowed.forEach((card, cardId) => {
+        cardsContainer.innerHTML+=`
+        <div class="col-4 card">
+                <img src="img/${card.img}" alt="">
+                <div class="card-info">
+                    <span class="title">
+                        ${decodeHtml(card.title)}
+                    </span>
+                    <div>
+                        <div class="price-wrap">
+                            <span class="price-old">${card.discount !== "" ? card.price + " ₽" : ""}</span>
+                            <span class="price-discount">${card.discount !== "" ? getDiscount(card.price, card.discount) : card.price} ₽</span>
+                        </div>
+                        <div class="add-cart" onclick="addCart(${cardId})">
+                            В корзину
+                        </div>
+                    </div>
+                </div>
+            </div>`
+        // cardId++;
     });
 }
 
 
-function createTaskHTML(card, cardId) {
-    const cardElem = document.createElement('div');
-    cardElem.classList.add('col-4', 'card');
+// function createTaskHTML(card, cardId) {
+//     const cardElem = document.createElement('div');
+//     cardElem.classList.add('col-4', 'card');
     
-    const cardImg = document.createElement('img');
-    cardImg.src = `img/${card.img}`;
-    cardImg.alt = '';
+//     const cardImg = document.createElement('img');
+//     cardImg.src = `img/${card.img}`;
+//     cardImg.alt = '';
 
-    const cardInfo = document.createElement('div');
-    cardInfo.classList.add('card-info');
+//     const cardInfo = document.createElement('div');
+//     cardInfo.classList.add('card-info');
 
-    const titleSpan = document.createElement('span');
-    titleSpan.classList.add('title');
-    titleSpan.innerText = decodeHtml(card.title);
+//     const titleSpan = document.createElement('span');
+//     titleSpan.classList.add('title');
+//     titleSpan.innerText = decodeHtml(card.title);
 
-    const priceDiv = document.createElement('div');
+//     const priceDiv = document.createElement('div');
 
-    const priceWrap = document.createElement('div');
-    priceWrap.classList.add('price-wrap');
+//     const priceWrap = document.createElement('div');
+//     priceWrap.classList.add('price-wrap');
 
-    const priceOld = document.createElement('span');
-    priceOld.classList.add('price-old');
+//     const priceOld = document.createElement('span');
+//     priceOld.classList.add('price-old');
 
-    const priceDiscount = document.createElement('span');
-    priceDiscount.classList.add('price-discount');
+//     const priceDiscount = document.createElement('span');
+//     priceDiscount.classList.add('price-discount');
 
-    if (card.discount !== ""){
-        priceOld.innerText = card.price + ' ₽';
-        priceDiscount.innerText = String(getDiscount(card.price, card.discount)) + ' ₽';
-        // console.log((parseInt(card.price) * (100 - parseInt(card.discount))) / 100);
-    }
-    else{
-        priceDiscount.innerText = card.price + ' ₽';
-        priceOld.innerText = "";
-    }
-
-    
-    // priceOld.innerText = card.discount !== "" ? (parseInt(card.price) + parseInt(card.price) * parseInt(card.discount) / 100) + ' ₽' : "";
-
-    
-    
-
-    const addCart = document.createElement("div");
-    addCart.classList.add("add-cart");
-    addCart.innerText = "В корзину";
-    addCart.setAttribute('onclick', 'addCart('+String(cardId)+')');
-
-    priceWrap.appendChild(priceOld);
-    priceWrap.appendChild(priceDiscount);
-
-    cardInfo.appendChild(titleSpan);
-    priceDiv.appendChild(priceWrap);
-    priceDiv.appendChild(addCart);
-    cardInfo.appendChild(priceDiv)
-
-    cardElem.appendChild(cardImg);
-    cardElem.appendChild(cardInfo);
-
-    return cardElem;
-}
-
-// function setFilters(prods, isClear) {
-//     let maxPrice = Math.max(...prods.map(prod => prod.price));
-//     let minPrice = Math.min(...prods.map(prod => prod.price));
-//     let maxRom = Math.max(...prods.map(prod => parseInt(prod.rom)));
-//     let minRom = Math.min(...prods.map(prod => parseInt(prod.rom)));
-//     let maxRam = Math.max(...prods.map(prod => parseInt(prod.ram)));
-//     let minRam = Math.min(...prods.map(prod => parseInt(prod.ram)));
-//     let filters = JSON.parse(localStorage.getItem('filters')) || false;
-//     // filters = false
-//     if (isClear || !filters){
-//         document.getElementById('f-price-from').value = minPrice;
-//         document.getElementById('f-price-from').setAttribute('min', minPrice);
-//         document.getElementById('f-price-from').setAttribute('max', maxPrice);
-//         document.getElementById('f-price-to').value = maxPrice;
-//         document.getElementById('f-price-to').setAttribute('min', minPrice);
-//         document.getElementById('f-price-to').setAttribute('max', maxPrice);
-    
-//         document.getElementById('f-rom-from').value = minRom;
-//         document.getElementById('f-rom-from').setAttribute('min', minRom);
-//         document.getElementById('f-rom-from').setAttribute('max', maxRom);
-//         document.getElementById('f-rom-to').value = maxRom;
-//         document.getElementById('f-rom-to').setAttribute('min', minRom);
-//         document.getElementById('f-rom-to').setAttribute('max', maxRom);
-    
-//         document.getElementById('f-ram-from').value = minRam;
-//         document.getElementById('f-ram-from').setAttribute('min', minRam);
-//         document.getElementById('f-ram-from').setAttribute('max', maxRam);
-//         document.getElementById('f-ram-to').value = maxRam;
-//         document.getElementById('f-ram-to').setAttribute('min', minRam);
-//         document.getElementById('f-ram-to').setAttribute('max', maxRam);
+//     if (card.discount !== ""){
+//         priceOld.innerText = card.price + ' ₽';
+//         priceDiscount.innerText = String(getDiscount(card.price, card.discount)) + ' ₽';
 //     }
 //     else{
-//         console.log(filters);
-//         document.getElementById('f-price-from').value = filters.price.from;
-//         document.getElementById('f-price-from').setAttribute('min', minPrice);
-//         document.getElementById('f-price-from').setAttribute('max', maxPrice);
-//         document.getElementById('f-price-to').value = filters.price.to;
-//         document.getElementById('f-price-to').setAttribute('min', filters.minPrice);
-//         document.getElementById('f-price-to').setAttribute('max', filters.maxPrice);
-    
-//         document.getElementById('f-rom-from').value = filters.rom.from;
-//         document.getElementById('f-rom-from').setAttribute('min', filters.minRom);
-//         document.getElementById('f-rom-from').setAttribute('max', maxRom);
-//         document.getElementById('f-rom-to').value = filters.rom.to;
-//         document.getElementById('f-rom-to').setAttribute('min', minRom);
-//         document.getElementById('f-rom-to').setAttribute('max', maxRom);
-    
-//         document.getElementById('f-ram-from').value = filters.ram.from;
-//         document.getElementById('f-ram-from').setAttribute('min', minRam);
-//         document.getElementById('f-ram-from').setAttribute('max', maxRam);
-//         document.getElementById('f-ram-to').value = filters.ram.to;
-//         document.getElementById('f-ram-to').setAttribute('min', minRam);
-//         document.getElementById('f-ram-to').setAttribute('max', maxRam);
+//         priceDiscount.innerText = card.price + ' ₽';
+//         priceOld.innerText = "";
 //     }
+
+//     const addCart = document.createElement("div");
+//     addCart.classList.add("add-cart");
+//     addCart.innerText = "В корзину";
+//     addCart.setAttribute('onclick', 'addCart('+String(cardId)+')');
+
+//     priceWrap.appendChild(priceOld);
+//     priceWrap.appendChild(priceDiscount);
+
+//     cardInfo.appendChild(titleSpan);
+//     priceDiv.appendChild(priceWrap);
+//     priceDiv.appendChild(addCart);
+//     cardInfo.appendChild(priceDiv)
+
+//     cardElem.appendChild(cardImg);
+//     cardElem.appendChild(cardInfo);
+
+//     return cardElem;
 // }
 
 function clearFilterData(){
@@ -526,7 +472,6 @@ function clearFilterData(){
         }
     }
 
-    // console.log(prices);
 
     let priceTo = Math.max(...prices.map(elem => parseInt(elem)));
     let priceFrom = Math.min(...prices.map(elem => parseInt(elem)));
@@ -556,8 +501,6 @@ function clearFilterData(){
         withDiscount: withDiscount
     };
 
-    // console.log(filterData)
-
     localStorage.setItem('filters', JSON.stringify(filterData));
 }
 
@@ -566,37 +509,13 @@ function updateFilterData(){
     let priceFrom = document.getElementById('f-price-from').value;
     let priceTo = document.getElementById('f-price-to').value;
 
-    // Get values from ROM input fields
     let romFrom = document.getElementById('f-rom-from').value;
     let romTo = document.getElementById('f-rom-to').value;
 
-    // Get values from RAM input fields
     let ramFrom = document.getElementById('f-ram-from').value;
     let ramTo = document.getElementById('f-ram-to').value;
 
     var manufacturers = manufacturersList;
-
-    // domManufacturers = document.getElementsByClassName('manufacturers-elem');
-
-    // for (var i = 0; i < domManufacturers.length; i++) {
-    //     var manufacturer = domManufacturers[i].checked;
-    //     if (!manufacturers['manufacturer' + (i+1)]) {
-    //         manufacturers['manufacturer' + (i+1)] = manufacturer;
-    //     }
-    // }
-
-    // withDiscount = document.getElementById('f-discount-check').checked
-    
-
-    // try{
-    //     Object.keys(document.getElementsByClassName('manufacturers-elem')).forEach(element => {
-    //         manufacturers.appendChild({ [element.dataset.ftitle]: element.checked});
-    //     });
-    // }
-    // catch{
-    //     manufacturers = manufacturersList;
-    //     console.log("Updateted cleared data");
-    // }
 
     let inputs = document.querySelectorAll('.manufacturers-elem');
 
