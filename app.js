@@ -5,7 +5,7 @@ domFilterRomTo =  document.getElementById('f-rom-to');
 domFilterRamFrom = document.getElementById('f-ram-from');
 domFilterRamTo =  document.getElementById('f-ram-to');
 
-var prods = [
+let prods = [
     {
         "title": "4&quot; Смартфон DEXP A440 8 ГБ розовый",
         "price": "3200",
@@ -44,7 +44,7 @@ var prods = [
     }
 ]
 
-var manufacturersList = [
+let manufacturersList = [
     {
         title: "DEXP",
         checked: true
@@ -59,18 +59,9 @@ var manufacturersList = [
     }
 ]
 
-var sortOrderList = {
-    selected: 0,
-    list:[
-        'asc',
-        'desc',
-        'ascPrice',
-        'descPrice'
-    ]
-}
+let sortOrderList = ["asc", "desc", "ascPrice", "descPrice"];
 
-emptyCart = []
-
+emptyCart = [];
 
 function clearCart(){
     cart = emptyCart;
@@ -103,89 +94,9 @@ function decodeHtml(html) {
     return txt.value;
 }
 
-// function updateFilterData(){
-//     let priceFrom = document.getElementById('f-price-from').value;
-//     let priceTo = document.getElementById('f-price-to').value;
-
-//     // console.log(priceFrom);
-
-//     let romFrom = document.getElementById('f-rom-from').value;
-//     let romTo = document.getElementById('f-rom-to').value;
-
-//     let ramFrom = document.getElementById('f-ram-from').value;
-//     let ramTo = document.getElementById('f-ram-to').value;
-
-//     let manufacturer1 = document.getElementById('f-manufacturer-1').checked;
-//     let manufacturer2 = document.getElementById('f-manufacturer-2').checked;
-//     let manufacturer3 = document.getElementById('f-manufacturer-3').checked;
-
-//     let withDiscount = document.getElementById('f-discount-check').checked;
-
-//     // Create an object with the input values
-//     let filterData = {
-//         price: {
-//         from: priceFrom,
-//         to: priceTo
-//         },
-//         rom: {
-//         from: romFrom,
-//         to: romTo
-//         },
-//         ram: {
-//         from: ramFrom,
-//         to: ramTo
-//         },
-//         manufacturer: {
-//         manufacturer1: manufacturer1,
-//         manufacturer2: manufacturer2,
-//         manufacturer3: manufacturer3
-//         },
-//         withDiscount: withDiscount
-//     };
-
-//     // console.log(filterData);
-    
-//     // Convert the object to JSON and store it in localStorage
-//     localStorage.setItem('filters', JSON.stringify(filterData));
-// };
-
-// function ClearFilterData(){
-//     let priceFrom = Math.max(...prods.map(prod => prod.price));
-//     let priceTo = Math.min(...prods.map(prod => prod.price));
-//     let romTo = Math.max(...prods.map(prod => parseInt(prod.rom)));
-//     let romFrom = Math.min(...prods.map(prod => parseInt(prod.rom)));
-//     let ramTo = Math.max(...prods.map(prod => parseInt(prod.ram)));
-//     let ramFrom = Math.min(...prods.map(prod => parseInt(prod.ram)));
-
-//     let manufacturer1 = document.getElementById('f-manufacturer-1').checked;
-//     let manufacturer2 = document.getElementById('f-manufacturer-2').checked;
-//     let manufacturer3 = document.getElementById('f-manufacturer-3').checked;
-
-//     let withDiscount = document.getElementById('f-discount-check').checked;
-
-//     let filterData = {
-//         price: {
-//         from: priceFrom,
-//         to: priceTo
-//         },
-//         rom: {
-//         from: romFrom,
-//         to: romTo
-//         },
-//         ram: {
-//         from: ramFrom,
-//         to: ramTo
-//         },
-//         manufacturer: {
-//         manufacturer1: manufacturer1,
-//         manufacturer2: manufacturer2,
-//         manufacturer3: manufacturer3
-//         },
-//         withDiscount: withDiscount
-//     };
-
-//     localStorage.setItem('filters', filterData);
-// };
+function removeChecked(list) {
+    return list.filter(item => !item.checked);
+}
 
 const searchProduct = (query) => {
     query = query.toLowerCase();
@@ -195,19 +106,46 @@ const searchProduct = (query) => {
     return results;
   };
 
+// function sortProducts(products, order) {
+//     console.log(order);
+//     switch (order) {
+//         case 0:
+//           return products.sort((a, b) => getDiscount(a.price, a.discount) - getDiscount(b.price, b.discount));
+//         case 1:
+//           return products.sort((a, b) => getDiscount(b.price, b.discount) - getDiscount(a.price, a.discount));
+//         case 2:
+//           return products.slice().sort((a, b) => products.indexOf(a) - products.indexOf(b));
+//         case 3:
+//           return products.slice().sort((a, b) => products.indexOf(b) - products.indexOf(a));
+//         default:
+//           return products;
+//     }
+// }
+
 function sortProducts(products, order) {
-    if (order === "ascPrice") {
-        return products.sort((a, b) => getDiscount(a.price, a.discount) - getDiscount(b.price, b.discount));
-    } else if (order === "descPrice") {
-        return products.sort((a, b) => getDiscount(b.price, b.discount) - getDiscount(a.price, a.discount));
-    } else if (order === "asc") {
-        return products.slice().sort((a, b) => products.indexOf(a) - products.indexOf(b));
-    } else if (order === "desc") {
-        return products.slice().sort((a, b) => products.indexOf(b) - products.indexOf(a));
-    } else {
+    console.log(order);
+    switch (order) {
+      case 0:
+        const sortedAscPrice = products.sort((a, b) => getDiscount(a.price, a.discount) - getDiscount(b.price, b.discount));
+        console.log(sortedAscPrice);
+        return sortedAscPrice;
+      case 1:
+        const sortedDescPrice = products.sort((a, b) => getDiscount(b.price, b.discount) - getDiscount(a.price, a.discount));
+        console.log(sortedDescPrice);
+        return sortedDescPrice;
+      case 2:
+        const sortedAsc = products.slice().sort((a, b) => products.indexOf(a) - products.indexOf(b));
+        console.log(sortedAsc);
+        return sortedAsc;
+      case 3:
+        const sortedDesc = products.slice().sort((a, b) => products.indexOf(b) - products.indexOf(a));
+        console.log(sortedDesc);
+        return sortedDesc;
+      default:
+        console.log(products);
         return products;
     }
-}
+  }
 
 function getDiscount(price, discount){
     if (discount !== ""){
@@ -218,10 +156,8 @@ function getDiscount(price, discount){
     }
 }
 
-function removeChecked(list) {
-    return list.filter(item => !item.checked);
-  }
 
+// Фильтрация
 function filter(data, filtersData) {
 
     let maxPrice = Math.max(...prods.map(prod => prod.price));
@@ -231,15 +167,14 @@ function filter(data, filtersData) {
     let maxRam = Math.max(...prods.map(prod => parseInt(prod.ram)));
     let minRam = Math.min(...prods.map(prod => parseInt(prod.ram)));
 
+    domFilterPriceFrom.value = filtersData.price.from;
+    domFilterPriceTo.value = filtersData.price.to;
 
-    document.getElementById('f-price-from').value = filtersData.price.from;
-    document.getElementById('f-price-to').value = filtersData.price.to;
+    domFilterRomFrom.value = filtersData.rom.from;
+    domFilterRomTo.value = filtersData.rom.to;
 
-    document.getElementById('f-rom-from').value = filtersData.rom.from;
-    document.getElementById('f-rom-to').value = filtersData.rom.to;
-
-    document.getElementById('f-ram-from').value = filtersData.ram.from;
-    document.getElementById('f-ram-to').value = filtersData.ram.to;
+    domFilterRamFrom.value = filtersData.ram.from;
+    domFilterRamTo.value = filtersData.ram.to;
 
     
     let inputs = document.querySelectorAll('.manufacturers-elem');
@@ -252,29 +187,18 @@ function filter(data, filtersData) {
     
 
     let filteredData = data.filter(item => {
-        
-        // price = item.discount !== "" ? (parseInt(item.price) + parseInt(item.price) * parseInt(item.discount) / 100) : "";
-        
-        // // console.log(price);
-
         calcPrice = getDiscount(item.price, item.discount)
-
 
         // цена
         if (filtersData.price.from && filtersData.price.to) {
             if (calcPrice < filtersData.price.from || calcPrice > filtersData.price.to) {
-                // console.log(item.title);
-                // console.log(item.price);
                 return false;
             }
         }
     
-        //   внут. память
-        
+        //   внут. памят
         if (filtersData.rom.from && filtersData.rom.to) {
             if (parseInt(item.rom) < filtersData.rom.from || parseInt(item.rom) > filtersData.rom.to) {
-                // console.log(item.title);
-                // console.log(item.rom);
                 return false;
             }
         }
@@ -282,27 +206,11 @@ function filter(data, filtersData) {
         //   опер. память
         if (filtersData.ram.from && filtersData.ram.to) {
             if (parseInt(item.ram) < filtersData.ram.from || parseInt(item.ram) > filtersData.ram.to) {
-                // console.log(item.title);
-                // console.log(item.ram);
                 return false;
             }
         }
         
         // фильтр производителей
-
-
-
-        // if (manufacturer1 && item.manufacturer === "DEXP") {
-        //     return true;
-        // }
-        // if (manufacturer2 && item.manufacturer === "Samsung") {
-        //     return true;
-        // }
-        // if (manufacturer3 && item.manufacturer === "POCO") {
-        //     return true;
-        // }
-
-
         checkedManufacturer = false;
 
         removeChecked(filtersData.manufacturer).forEach(elem => {
@@ -310,7 +218,7 @@ function filter(data, filtersData) {
             console.log(elem.title);
             console.log('\n')
             if (String(item.manufacturer) == String(elem.title)){
-                console.log('if');
+                // console.log('if');
                 checkedManufacturer = true;
             }
         });
@@ -319,20 +227,15 @@ function filter(data, filtersData) {
             return false;
         }
 
-
-        
         // фильтр скидки
         if (filtersData.withDiscount && item.discount == "") {
             return false;
         }
-        // console.log(item.title);
         return true;
         });
 
-
-        // // console.log(filteredData)
-        return filteredData;
-  }
+    return filteredData;
+}
 
 
 function showProds(){
@@ -350,13 +253,10 @@ function showProds(){
 
     if (notObject){
         clearFilterData();
-        // console.log('cleared filter data');
-        // console.log(JSON.parse(localStorage.getItem('filters')));
     }
 
     filtersData = JSON.parse(localStorage.getItem('filters'));
 
-    // console.log(filtersData);
 
     // убрать пустые 
     prodsShowed = prods.filter(function(e){
@@ -365,10 +265,10 @@ function showProds(){
 
     prodsShowed = filter(prods, filtersData)
     try{
-        sortOrder = JSON.parse(localStorage.getItem('sortOrderList'));
+        sortOrder = localStorage.getItem('sortOrderList');
     }
     catch{
-        sortOrder = sortOrderList;
+        sortOrder = 0;
         console.log('default sort');
     }
 
@@ -376,9 +276,7 @@ function showProds(){
     prodsShowed = sortProducts(prodsShowed, sortOrder);
     console.log(prodsShowed);
 
-
     const cardsContainer = document.querySelector('.cards');
-
     cardsContainer.innerHTML = '';
 
     prodsShowed.forEach((card, cardId) => {
@@ -403,61 +301,6 @@ function showProds(){
         // cardId++;
     });
 }
-
-
-// function createTaskHTML(card, cardId) {
-//     const cardElem = document.createElement('div');
-//     cardElem.classList.add('col-4', 'card');
-    
-//     const cardImg = document.createElement('img');
-//     cardImg.src = `img/${card.img}`;
-//     cardImg.alt = '';
-
-//     const cardInfo = document.createElement('div');
-//     cardInfo.classList.add('card-info');
-
-//     const titleSpan = document.createElement('span');
-//     titleSpan.classList.add('title');
-//     titleSpan.innerText = decodeHtml(card.title);
-
-//     const priceDiv = document.createElement('div');
-
-//     const priceWrap = document.createElement('div');
-//     priceWrap.classList.add('price-wrap');
-
-//     const priceOld = document.createElement('span');
-//     priceOld.classList.add('price-old');
-
-//     const priceDiscount = document.createElement('span');
-//     priceDiscount.classList.add('price-discount');
-
-//     if (card.discount !== ""){
-//         priceOld.innerText = card.price + ' ₽';
-//         priceDiscount.innerText = String(getDiscount(card.price, card.discount)) + ' ₽';
-//     }
-//     else{
-//         priceDiscount.innerText = card.price + ' ₽';
-//         priceOld.innerText = "";
-//     }
-
-//     const addCart = document.createElement("div");
-//     addCart.classList.add("add-cart");
-//     addCart.innerText = "В корзину";
-//     addCart.setAttribute('onclick', 'addCart('+String(cardId)+')');
-
-//     priceWrap.appendChild(priceOld);
-//     priceWrap.appendChild(priceDiscount);
-
-//     cardInfo.appendChild(titleSpan);
-//     priceDiv.appendChild(priceWrap);
-//     priceDiv.appendChild(addCart);
-//     cardInfo.appendChild(priceDiv)
-
-//     cardElem.appendChild(cardImg);
-//     cardElem.appendChild(cardInfo);
-
-//     return cardElem;
-// }
 
 function clearFilterData(){
 
@@ -497,7 +340,7 @@ function clearFilterData(){
         from: ramFrom,
         to: ramTo
         },
-        manufacturer: manufacturers,
+        manufacturer: manufacturersList,
         withDiscount: withDiscount
     };
 
@@ -548,7 +391,6 @@ function updateFilterData(){
     localStorage.setItem('filters', JSON.stringify(filterData));
 }
 
-// const modalTrigger = document.getElementsByClassName("trigger")[0];
 
 const windowInnerWidth = document.documentElement.clientWidth;
 const scrollbarWidth = parseInt(window.innerWidth) - parseInt(windowInnerWidth);
@@ -620,12 +462,6 @@ function renderCart(){
 
     
     let elemId = 0;
-    // cart.forEach(elem => {
-    //     const taskHTML = createCartHTML(elem, elemId, sumOrder);
-    //     cartContainerCards.appendChild(taskHTML[0]);
-
-    //     elemId++;
-    // });
     for (let i = 0; i < cart.length; i++) {
         const elem = cart[i];
         const taskHTML = createCartHTML(elem, elemId, sumOrder);
@@ -748,9 +584,6 @@ function createCartHTML(elem, elemId, sumOrder){
     return [cardElem, sumOrder];
 }
 
-
-
-
 if (localStorage.getItem('cart')){
     var cart = JSON.parse(localStorage.getItem('cart'));
 }
@@ -759,13 +592,6 @@ else{
 }
 
 showProds()
-
-
-
-
-
-
-
 
 function applyFilters(){
     updateFilterData()
@@ -785,35 +611,28 @@ document.addEventListener('DOMContentLoaded', e => {
 
 
     document.getElementById('asc-sort-btn').addEventListener('click', e => {
-        localSortOrderList = sortOrderList;
 
-        localSortOrderList.selected = 0;
 
-        localStorage.setItem('sortOrderList', JSON.stringify(localSortOrderList));
+        localStorage.setItem('sortOrderList', 0);
         showProds();
     });
     document.getElementById('desc-sort-btn').addEventListener('click', e => {
-        localSortOrderList = sortOrderList;
 
-        localSortOrderList.selected = 1;
 
-        localStorage.setItem('sortOrderList', JSON.stringify(localSortOrderList));
+
+        localStorage.setItem('sortOrderList', 1);
         showProds();
     });
     document.getElementById('ascPrice-sort-btn').addEventListener('click', e => {
-        localSortOrderList = sortOrderList;
 
-        localSortOrderList.selected = 2;
 
-        localStorage.setItem('sortOrderList', JSON.stringify(localSortOrderList));
+        localStorage.setItem('sortOrderList', 2);
         showProds();
     });
     document.getElementById('descPrice-sort-btn').addEventListener('click', e => {
-        localSortOrderList = sortOrderList;
 
-        localSortOrderList.selected = 3;
 
-        localStorage.setItem('sortOrderList', JSON.stringify(localSortOrderList));
+        localStorage.setItem('sortOrderList', 3);
         showProds();
     });
 
