@@ -4,6 +4,17 @@ domFilterRomFrom = document.getElementById('f-rom-from');
 domFilterRomTo =  document.getElementById('f-rom-to');
 domFilterRamFrom = document.getElementById('f-ram-from');
 domFilterRamTo =  document.getElementById('f-ram-to');
+domSearchQuery = document.getElementById('f-search');
+
+const windowInnerWidth = document.documentElement.clientWidth;
+const scrollbarWidth = parseInt(window.innerWidth) - parseInt(windowInnerWidth);
+
+const bodyElementHTML = document.getElementsByTagName("body")[0];
+const modalBackground = document.getElementsByClassName("modalBackground")[0];
+const modalClose = document.getElementsByClassName("modalClose")[0];
+const modalActive = document.getElementsByClassName("modalActive")[0];
+
+domSortingsList = document.querySelectorAll('.sortings a');
 
 let prods = [
     {
@@ -82,11 +93,25 @@ function checkForNullValues(arr) {
 
 function isObject(value) {
     return (
-      typeof value === 'object' &&
-      value !== null &&
-      !Array.isArray(value)
+      typeof value === 'object' & value !== null && !Array.isArray(value)
     );
+}
+
+function formatGoodsCount(count) {
+    let lastDigit = count % 10;
+    let lastTwoDigits = count % 100;
+  
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+      return count + " товаров";
+    } else if (lastDigit === 1) {
+      return count + " товар";
+    } else if (lastDigit >= 2 && lastDigit <= 4) {
+      return count + " товара";
+    } else {
+      return count + " товаров";
+    }
   }
+  
 
 function decodeHtml(html) {
     var txt = document.createElement("textarea");
@@ -98,54 +123,40 @@ function removeChecked(list) {
     return list.filter(item => !item.checked);
 }
 
-const searchProduct = (query) => {
-    query = query.toLowerCase();
-    const results = prods.filter((prod) =>
-      !prod.title.toLowerCase().includes(query)
+const searchProduct = (query, arr) => {
+    query = String(query).toLowerCase();
+    if (query == '') {return arr;}
+    const results = arr.filter((elem) =>
+        elem.title.toLowerCase().includes(query)
     );
     return results;
-  };
+};
 
-// function sortProducts(products, order) {
-//     console.log(order);
-//     switch (order) {
-//         case 0:
-//           return products.sort((a, b) => getDiscount(a.price, a.discount) - getDiscount(b.price, b.discount));
-//         case 1:
-//           return products.sort((a, b) => getDiscount(b.price, b.discount) - getDiscount(a.price, a.discount));
-//         case 2:
-//           return products.slice().sort((a, b) => products.indexOf(a) - products.indexOf(b));
-//         case 3:
-//           return products.slice().sort((a, b) => products.indexOf(b) - products.indexOf(a));
-//         default:
-//           return products;
-//     }
-// }
 
 function sortProducts(products, order) {
-    console.log(order);
-    switch (order) {
+    switch (parseInt(order)) {
       case 0:
-        const sortedAscPrice = products.sort((a, b) => getDiscount(a.price, a.discount) - getDiscount(b.price, b.discount));
-        console.log(sortedAscPrice);
-        return sortedAscPrice;
+        return products;
       case 1:
-        const sortedDescPrice = products.sort((a, b) => getDiscount(b.price, b.discount) - getDiscount(a.price, a.discount));
-        console.log(sortedDescPrice);
-        return sortedDescPrice;
+        return products.reverse();
       case 2:
-        const sortedAsc = products.slice().sort((a, b) => products.indexOf(a) - products.indexOf(b));
-        console.log(sortedAsc);
-        return sortedAsc;
+        return products.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
       case 3:
-        const sortedDesc = products.slice().sort((a, b) => products.indexOf(b) - products.indexOf(a));
-        console.log(sortedDesc);
-        return sortedDesc;
+        return products.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
       default:
-        console.log(products);
         return products;
     }
-  }
+}
+
+function sortProductsDom(num){
+    domSortingsList.forEach(elem => {
+        elem.classList.remove('sorting-selected');
+    });
+    domSortingsList[num].classList.add('sorting-selected');
+    localStorage.setItem('sortOrderList', num);
+    showProds();
+}
+
 
 function getDiscount(price, discount){
     if (discount !== ""){
@@ -160,49 +171,35 @@ function getDiscount(price, discount){
 // Фильтрация
 function filter(data, filtersData) {
 
-    let maxPrice = Math.max(...prods.map(prod => prod.price));
-    let minPrice = Math.min(...prods.map(prod => prod.price));
-    let maxRom = Math.max(...prods.map(prod => parseInt(prod.rom)));
-    let minRom = Math.min(...prods.map(prod => parseInt(prod.rom)));
-    let maxRam = Math.max(...prods.map(prod => parseInt(prod.ram)));
-    let minRam = Math.min(...prods.map(prod => parseInt(prod.ram)));
-
     domFilterPriceFrom.value = filtersData.price.from;
     domFilterPriceTo.value = filtersData.price.to;
-
     domFilterRomFrom.value = filtersData.rom.from;
     domFilterRomTo.value = filtersData.rom.to;
-
     domFilterRamFrom.value = filtersData.ram.from;
     domFilterRamTo.value = filtersData.ram.to;
 
-    
-    let inputs = document.querySelectorAll('.manufacturers-elem');
+    domSearchQuery = document.get
 
+    let inputs = document.querySelectorAll('.manufacturers-elem');
     inputs.forEach((input, index) => {
         input.checked = filtersData.manufacturer[index].checked;
     });
-
     document.getElementById('f-discount-check').checked = filtersData.withDiscount;
     
-
     let filteredData = data.filter(item => {
         calcPrice = getDiscount(item.price, item.discount)
-
         // цена
         if (filtersData.price.from && filtersData.price.to) {
             if (calcPrice < filtersData.price.from || calcPrice > filtersData.price.to) {
                 return false;
             }
         }
-    
         //   внут. памят
         if (filtersData.rom.from && filtersData.rom.to) {
             if (parseInt(item.rom) < filtersData.rom.from || parseInt(item.rom) > filtersData.rom.to) {
                 return false;
             }
         }
-        
         //   опер. память
         if (filtersData.ram.from && filtersData.ram.to) {
             if (parseInt(item.ram) < filtersData.ram.from || parseInt(item.ram) > filtersData.ram.to) {
@@ -212,17 +209,11 @@ function filter(data, filtersData) {
         
         // фильтр производителей
         checkedManufacturer = false;
-
         removeChecked(filtersData.manufacturer).forEach(elem => {
-            console.log(item.manufacturer);
-            console.log(elem.title);
-            console.log('\n')
             if (String(item.manufacturer) == String(elem.title)){
-                // console.log('if');
                 checkedManufacturer = true;
             }
         });
-
         if(checkedManufacturer){
             return false;
         }
@@ -237,16 +228,14 @@ function filter(data, filtersData) {
     return filteredData;
 }
 
-
+// Показ карточек
 function showProds(){
-
-    var notObject = false;
+    notObject = false;
     try {
-      var filters = JSON.parse(localStorage.getItem('filters'));
+      filters = JSON.parse(localStorage.getItem('filters'));
       if (JSON.stringify(filters).includes('null')) {
         notObject = true;
       }
-    //   // console.log(filters);
     } catch {
       notObject = true;
     }
@@ -254,28 +243,20 @@ function showProds(){
     if (notObject){
         clearFilterData();
     }
-
     filtersData = JSON.parse(localStorage.getItem('filters'));
-
-
-    // убрать пустые 
-    prodsShowed = prods.filter(function(e){
-        return e !== null && e !== undefined;
-    });
-
     prodsShowed = filter(prods, filtersData)
+
+    prodsShowed = searchProduct(localStorage.getItem('searchQuery'), prodsShowed);
+
+    // сортировки списка товаров
     try{
         sortOrder = localStorage.getItem('sortOrderList');
     }
     catch{
         sortOrder = 0;
-        console.log('default sort');
+        localStorage.setItem('sortOrderList', 0);
     }
-
-    // сортировки списка товаров
     prodsShowed = sortProducts(prodsShowed, sortOrder);
-    console.log(prodsShowed);
-
     const cardsContainer = document.querySelector('.cards');
     cardsContainer.innerHTML = '';
 
@@ -298,76 +279,51 @@ function showProds(){
                     </div>
                 </div>
             </div>`
-        // cardId++;
     });
 }
 
-function clearFilterData(){
+function updateFilterData(mode){
+    manufacturers = manufacturersList;
+    switch (mode) {
+        case 'clear':
+            prices = [];
+            for (var i = 0; i < prods.length; i++) {
+                if (prods[i].discount !== "") {
+                    discountPrice = prods[i].price * (1 - parseInt(prods[i].discount) / 100);
+                    prices.push(parseInt(discountPrice));
+                } else {
+                    prices.push(parseInt(prods[i].price));
+                }
+            }
+            localStorage.setItem('searchQuery', '')
+            withDiscount = false;
+            priceTo = Math.max(...prices.map(elem => parseInt(elem)));
+            priceFrom = Math.min(...prices.map(elem => parseInt(elem)));
+            romTo = Math.max(...prods.map(prod => parseInt(prod.rom)));
+            romFrom = Math.min(...prods.map(prod => parseInt(prod.rom)));
+            ramTo = Math.max(...prods.map(prod => parseInt(prod.ram)));
+            ramFrom = Math.min(...prods.map(prod => parseInt(prod.ram)));
 
-    var prices = [];
+            break;
+    
+        default:
+            let inputs = document.querySelectorAll('.manufacturers-elem');
 
-    for (var i = 0; i < prods.length; i++) {
-        if (prods[i].discount !== "") {
-            var discountPrice = prods[i].price * (1 - parseInt(prods[i].discount) / 100);
-            prices.push(parseInt(discountPrice));
-        } else {
-            prices.push(parseInt(prods[i].price));
-        }
+            inputs.forEach((input, index) => {
+                manufacturers[index].checked = input.checked;
+            });
+
+            priceFrom = document.getElementById('f-price-from').value;
+            priceTo = document.getElementById('f-price-to').value;
+            romFrom = document.getElementById('f-rom-from').value;
+            romTo = document.getElementById('f-rom-to').value;
+            ramFrom = document.getElementById('f-ram-from').value;
+            ramTo = document.getElementById('f-ram-to').value;
+
+            withDiscount = document.getElementById("f-discount-check").checked;
+            localStorage.setItem('searchQuery', document.getElementById('f-search').value);
+            break;
     }
-
-
-    let priceTo = Math.max(...prices.map(elem => parseInt(elem)));
-    let priceFrom = Math.min(...prices.map(elem => parseInt(elem)));
-    let romTo = Math.max(...prods.map(prod => parseInt(prod.rom)));
-    let romFrom = Math.min(...prods.map(prod => parseInt(prod.rom)));
-    let ramTo = Math.max(...prods.map(prod => parseInt(prod.ram)));
-    let ramFrom = Math.min(...prods.map(prod => parseInt(prod.ram)));
-
-    let manufacturers = manufacturersList;
-
-    withDiscount = false;
-
-    let filterData = {
-        price: {
-        from: priceFrom,
-        to: priceTo
-        },
-        rom: {
-        from: romFrom,
-        to: romTo
-        },
-        ram: {
-        from: ramFrom,
-        to: ramTo
-        },
-        manufacturer: manufacturersList,
-        withDiscount: withDiscount
-    };
-
-    localStorage.setItem('filters', JSON.stringify(filterData));
-}
-
-function updateFilterData(){
-
-    let priceFrom = document.getElementById('f-price-from').value;
-    let priceTo = document.getElementById('f-price-to').value;
-
-    let romFrom = document.getElementById('f-rom-from').value;
-    let romTo = document.getElementById('f-rom-to').value;
-
-    let ramFrom = document.getElementById('f-ram-from').value;
-    let ramTo = document.getElementById('f-ram-to').value;
-
-    var manufacturers = manufacturersList;
-
-    let inputs = document.querySelectorAll('.manufacturers-elem');
-
-    inputs.forEach((input, index) => {
-        manufacturers[index].checked = input.checked;
-    });
-
-    withDiscount = document.getElementById("f-discount-check").checked;
-
 
     let filterData = {
         price: {
@@ -385,37 +341,23 @@ function updateFilterData(){
         manufacturer: manufacturers,
         withDiscount: withDiscount
     };
-
-    console.log(filterData);
-
     localStorage.setItem('filters', JSON.stringify(filterData));
 }
 
-
-const windowInnerWidth = document.documentElement.clientWidth;
-const scrollbarWidth = parseInt(window.innerWidth) - parseInt(windowInnerWidth);
-
-const bodyElementHTML = document.getElementsByTagName("body")[0];
-const modalBackground = document.getElementsByClassName("modalBackground")[0];
-const modalClose = document.getElementsByClassName("modalClose")[0];
-const modalActive = document.getElementsByClassName("modalActive")[0];
-
-
-
-function showModal(message){
+function showModal(){
     modalBackground.style.display = "flex";
 }
 
-
-function addCart(prodId){
-    console.log(cart);
-    cartElem = {
-        number: 1,
-        product: prodId
+//КОРЗИНА
+function addCart(prodId) {
+    const cartElem = cart.find((elem) => elem.product === prodId);
+    if (cartElem) {
+        cartElem.number++;
     }
-    cart.push(cartElem);
+    else {
+        cart.push({number: 1, product: prodId});
+    }
     localStorage.setItem('cart', JSON.stringify(cart));
-    console.log(cart);
 }
 
 function minusElemCart(elemId){
@@ -434,212 +376,94 @@ function plusElemCart(elemId){
     renderCart();
 }
 
+function deleteElemCart(elemId){
+    cart.splice(elemId, 1);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    renderCart();
+}
 
 function renderCart(){
-    if (localStorage.getItem('cart')){
-        try{
-            cart = JSON.parse(localStorage.getItem('cart'));
-        }
-        catch{
-            cart = emptyCart;
-        }
-    }
-    else{
-        cart = emptyCart;
-    }
+    const cart = localStorage.getItem('cart') ? JSON.parse(localStorage.getItem('cart')) : emptyCart;
 
-
-    var sumOrder = 0;
+    let sumOrder = 0;
+    let numOrder = 0;
 
     const cartContainer = document.querySelector('.modalWindow');
 
     cartContainer.innerHTML = '';
 
     const cartContainerCards = document.createElement('div');
-    cartContainerCards.classList.add('CartCards');
+    cartContainerCards.classList.add('cartCards');
 
-    const cartOrderInfo = document.createElement('div');
+    cart.forEach((elem, index) => {
+        card = prods[elem.product];
+        cartContainerCards.innerHTML+=`<div class="card">
+        <img src="img/${card.img}" alt="">
+        <div class="card-info">
+            <div class="title">
+                ${card.title}
+            </div>
+            <div class="cartCardInfo">
+                <div class="cartElemInfo">
+                    <div class="cei-minus-number" onclick="minusElemCart(${index})">
+                        -
+                    </div>
+                    <div class="cei-number">
+                        ${elem.number}
+                    </div>
+                    <div class="cei-plus-number" onclick="plusElemCart(${index})">
+                        +
+                    </div>
+                </div>
+                <div class="price-wrap">
+                    <span class="price-old">${card.discount !== "" ? elem.number * card.price + " ₽" : ""}</span>
+                    <span class="price-discount">${card.discount !== "" ? elem.number * getDiscount(card.price, card.discount) : elem.number * card.price} ₽</span>
 
-    
-    let elemId = 0;
-    for (let i = 0; i < cart.length; i++) {
-        const elem = cart[i];
-        const taskHTML = createCartHTML(elem, elemId, sumOrder);
-        cartContainerCards.appendChild(taskHTML[0]);
-        elemId++;
-
-        sumOrder+=Number(taskHTML[1]);
-      }
+                </div>
+                
+                <div class="deleteBtn" onclick="deleteElemCart(${index})"></div>
+                
+            </div>
+        </div>`;
+        if (card.discount !== ""){
+            sumOrder += elem.number * getDiscount(card.price, card.discount);
+        }
+        else{
+            sumOrder += elem.number * card.price;
+        }
+        numOrder += elem.number;
+    });
 
     cartContainer.appendChild(cartContainerCards);
-
-
-    const cartOrderInfoSum = document.createElement('div');
-    cartOrderInfoSum.innerText = sumOrder + ' ₽';
-
-
-    const cartOrderInfoBtn = document.createElement('div');
-    cartOrderInfoBtn.classList.add('add-cart');
-    cartOrderInfoBtn.innerText = 'Заказать';
-
-    cartOrderInfo.appendChild(cartOrderInfoSum);
-    cartOrderInfo.appendChild(cartOrderInfoBtn);
-
-    cartContainer.appendChild(cartOrderInfo);
+    cartContainer.innerHTML+=`<div class="orderInfoContainer">
+        <div class="orderInfo">
+            <p>В корзине<p>
+            <p>${formatGoodsCount(numOrder)} </p>
+            <div class="orderSum">${sumOrder} ₽</div>
+            <div class="add-cart">Заказать</div>
+        </div>
+    </div>`;
 
     showModal();
 }
 
-function createCartHTML(elem, elemId, sumOrder){
-    
-    card = prods[elem.product];
-    console.log(elem.product);
-
-    const cardElem = document.createElement('div');
-    cardElem.classList.add('card');
-    cardElem.classList.add('modalCard');
-    
-    const cardImg = document.createElement('img');
-    cardImg.src = `img/${card.img}`;
-    cardImg.alt = '';
-
-    const cardInfo = document.createElement('div');
-    cardInfo.classList.add('card-info');
-
-    const titleSpan = document.createElement('span');
-    titleSpan.classList.add('title');
-    titleSpan.innerText = decodeHtml(card.title);
-
-    const priceDiv = document.createElement('div');
-
-    const priceWrap = document.createElement('div');
-    priceWrap.classList.add('price-wrap');
-
-    const priceOld = document.createElement('span');
-    priceOld.classList.add('price-old');
-
-    const priceDiscount = document.createElement('span');
-    priceDiscount.classList.add('price-discount');
-
-    const priceFull = document.createElement('span');
-    priceFull.classList.add('price-discount');
-
-    if (card.discount !== ""){
-        priceOld.innerText = card.price + ' ₽';
-        priceDiscount.innerText = String(elem.number) + ' ✖ ' + String(getDiscount(card.price, card.discount)) + ' ₽';
-        priceFull.innerText = String(getDiscount(card.price, card.discount) * elem.number) + ' ₽';
-        // console.log((parseInt(card.price) * (100 - parseInt(card.discount))) / 100);
-
-        sumOrder += getDiscount(card.price, card.discount);
-    }
-    else{
-        priceDiscount.innerText = String(elem.number) + ' ✖ ' + card.price + ' ₽';
-        priceFull.innerText = card.price * elem.number + ' ₽';
-        priceOld.innerText = "";
-
-        sumOrder += card.price;
-    }
-
-    
-    // priceOld.innerText = card.discount !== "" ? (parseInt(card.price) + parseInt(card.price) * parseInt(card.discount) / 100) + ' ₽' : "";
-
-    
-    
-
-    const elemInfo = document.createElement("div");
-    elemInfo.classList.add("cartElemInfo");
-
-    const elemInfoNum = document.createElement("div");
-    elemInfoNum.innerText = elem.number;
-    elemInfoNum.classList.add('cei-number');
-
-    const elemInfoMinus = document.createElement("div");
-    elemInfoMinus.innerText = '-';
-    elemInfoMinus.classList.add('cei-minus-number');
-    elemInfoMinus.setAttribute('onclick', 'minusElemCart('+String(elemId)+')');
-
-    const elemInfoPlus = document.createElement("div");
-    elemInfoPlus.innerText = '+';
-    elemInfoPlus.classList.add('cei-plus-number');
-    elemInfoPlus.setAttribute('onclick', 'plusElemCart('+String(elemId)+')');
-
-    elemInfo.appendChild(elemInfoNum);
-    elemInfo.appendChild(elemInfoMinus);
-    elemInfo.appendChild(elemInfoPlus);
-
-    // addCart.setAttribute('onclick', 'plusElemCart('+String(elemId)+')');
-
-    priceWrap.appendChild(priceOld);
-    priceWrap.appendChild(priceDiscount);
-    priceWrap.appendChild(priceFull);
-
-    cardInfo.appendChild(titleSpan);
-    priceDiv.appendChild(priceWrap);
-    priceDiv.appendChild(elemInfo);
-    cardInfo.appendChild(priceDiv)
-
-    cardElem.appendChild(cardImg);
-    cardElem.appendChild(cardInfo);
-
-    return [cardElem, sumOrder];
-}
-
-if (localStorage.getItem('cart')){
-    var cart = JSON.parse(localStorage.getItem('cart'));
-}
-else{
-    var cart = emptyCart;
-}
-
+// Запуск
+cart = localStorage.getItem('cart') ? JSON.parse(localStorage.getItem('cart')) : emptyCart;
 showProds()
 
-function applyFilters(){
-    updateFilterData()
-
-    showProds();
-}
-
-function resetFilters(){
-    clearFilterData();
-
-    showProds();
-}
-
+//Обработка нажатий
 document.addEventListener('DOMContentLoaded', e => {
-    document.getElementsByClassName('apply-btn')[0].addEventListener('click', e => applyFilters());
-    document.getElementsByClassName('reset-btn')[0].addEventListener('click', e => resetFilters());
+    document.getElementsByClassName('apply-btn')[0].addEventListener('click', e => {
+        updateFilterData();
+        showProds();});
 
-
-    document.getElementById('asc-sort-btn').addEventListener('click', e => {
-
-
-        localStorage.setItem('sortOrderList', 0);
-        showProds();
-    });
-    document.getElementById('desc-sort-btn').addEventListener('click', e => {
-
-
-
-        localStorage.setItem('sortOrderList', 1);
-        showProds();
-    });
-    document.getElementById('ascPrice-sort-btn').addEventListener('click', e => {
-
-
-        localStorage.setItem('sortOrderList', 2);
-        showProds();
-    });
-    document.getElementById('descPrice-sort-btn').addEventListener('click', e => {
-
-
-        localStorage.setItem('sortOrderList', 3);
-        showProds();
-    });
+    document.getElementsByClassName('reset-btn')[0].addEventListener('click', e => {
+        updateFilterData('clear');
+        showProds();});
 
     document.getElementsByClassName('cart-btn')[0].addEventListener('click', e => {
         renderCart();
     });
-
 
     modalClose.addEventListener("click", function () {
         modalBackground.style.display = "none";

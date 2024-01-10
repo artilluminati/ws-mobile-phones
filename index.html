@@ -9,6 +9,24 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="hide">
+        <svg id="sorting_up" class="iconSvg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_12_2)">
+                <rect width="16" height="2" fill="#D9D9D9"/>
+                <rect y="14" width="8" height="2" fill="#D9D9D9"/>
+                <rect y="7" width="12" height="2" fill="#D9D9D9"/>
+                </g>
+        </svg>
+        <svg id="sorting_down" class="iconSvg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_12_6)">
+            <rect y="14" width="16" height="2" fill="#D9D9D9"/>
+            <rect width="8" height="2" fill="#D9D9D9"/>
+            <rect y="7" width="12" height="2" fill="#D9D9D9"/>
+            </g>
+        </svg>
+    </div>
+    
+        
     <nav>
         <div class="container">
             <a href="index.html" class="logo">Мобильные телефоны</a>
@@ -20,7 +38,7 @@
     </nav>
 
     <div class="modalBackground">
-        <div class="modalActive">
+        <div class="modalActive container">
             <div class="modalClose">
                 &#x2716;
             </div>
@@ -29,37 +47,13 @@
             </div>
         </div>
       </div>
-      <!-- <div class="col-4 card">
-        <img src="img/1.jpg" alt="">
-        <div class="card-info">
-            <span class="title">
-                Название телефона
-            </span>
-            <div>
-                <div class="price-wrap">
-                    <span class="price-old">3 200 ₽</span>
-                    <span class="price-discount">3 200 ₽</span>
-                </div>
-                <div class="cartElemInfo">
-                    <div class="cei-number">
-                        1
-                    </div>
-                    <div class="cei-minus-number" onclick="cartMinus(0)">
-                        -
-                    </div>
-                    <div class="cei-plus-number" onclick="cartPlus(0)">
-                        +
-                    </div>
-                </div>
-            </div>
-        </div> -->
     </div>
     </div>
     <div class="container sortings">
-        <a id="desc-sort-btn">По дате появления ↑</a>
-        <a id="asc-sort-btn">По дате появления ↓</a>
-        <a id="ascPrice-sort-btn">По цене ↑</a>
-        <a id="descPrice-sort-btn">По цене ↓</a>
+        <a onclick="sortProductsDom(0)" class="sorting-selected">По дате добавления <svg class="iconSvg"><use href="#sorting_down"></use></svg></a>
+        <a onclick="sortProductsDom(1)">По дате добавления <svg class="iconSvg"><use href="#sorting_up"></use></svg></a>
+        <a onclick="sortProductsDom(2)">По цене <svg class="iconSvg"><use href="#sorting_down"></use></svg></a>
+        <a onclick="sortProductsDom(3)">По цене <svg class="iconSvg"><use href="#sorting_up"></use></svg></a>
     </div>
     <div class="container wrap">
         <div class="cards">
@@ -100,7 +94,7 @@
         </div>
         <div class="filters col-2">
             <span class="title-heading">Фильтры</span>
-            <input type="text" id="f-search" style="margin-top: 30px;max-width: 100%;" placeholder="Поиск">
+            <input type="text" id="f-search" style="margin-top: 30px;max-width: 100%;width: 100%;" placeholder="Поиск">
             <div class="filter" id="f-price">
                 <span class="filter-title">Цена</span>
                 <div class="filter-num">
@@ -129,15 +123,15 @@
                 <span class="filter-title">Производители</span>
                 <div>
                     <div>
-                        <input type="checkbox" id="f-manufacturer-1" class="manufacturers-elem" data-ftitle="DEXP">
+                        <input type="checkbox" id="f-manufacturer-1" class="manufacturers-elem custom-checkbox" data-ftitle="DEXP">
                         <label for="f-manufacturer-1">DEXP</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="f-manufacturer-2" class="manufacturers-elem" data-ftitle="Samsung">
+                        <input type="checkbox" id="f-manufacturer-2" class="manufacturers-elem custom-checkbox" data-ftitle="Samsung">
                         <label for="f-manufacturer-2">Samsung</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="f-manufacturer-3" class="manufacturers-elem" data-ftitle="POCO">
+                        <input type="checkbox" id="f-manufacturer-3" class="manufacturers-elem custom-checkbox" data-ftitle="POCO">
                         <label for="f-manufacturer-3">POCO</label>
                     </div>
                 </div>
@@ -146,8 +140,8 @@
                 <span class="filter-title">Показывать товары только со скидкой</span>
                 <div>
                     <div>
-                        <input type="checkbox" id="f-discount-check">
-                        <label for="f-manufacturer-1">Да</label>
+                        <input type="checkbox" id="f-discount-check" class="custom-checkbox">
+                        <label for="f-discount-check">Да</label>
                     </div>
                 </div>
             </div>

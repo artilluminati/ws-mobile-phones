@@ -2,12 +2,23 @@
     margin: 0;
     padding: 0;
 
-    --primary: #42C1D1;
+    /* --primary: #42C1D1;
     --text: #061619;
     --text-light: #384547;
     --bg: #EFFAFB;
     --secondary: #95A6E5;
-    --accent: #665FD8;
+    --accent: #665FD8; */
+
+    --primary: #652026;
+    --dark-primary: #4d181c;
+    --text: #1a0a0c;
+    --text-light: #47383a;
+    /* --bg: #fbf4f4; */
+    --bg: #ffffff;
+    --bg2: #fbf4f4;
+    --white: #ffffff;
+    --secondary: #dd8890;
+    --accent: #cb3441;
 
     --col: calc(100vw / 12);
     --round: 5px;
@@ -31,6 +42,19 @@ a{
     margin: 0 auto;
 }
 
+.hide{
+    display: none;
+}
+
+.iconSvg rect{
+    fill: var(--text);
+}
+
+.iconSvg{
+    max-height: 16px;
+    max-width: 16px;
+}
+
 .wrap{
     display: flex;
     flex-direction: row;
@@ -43,6 +67,40 @@ input:not([type="file" i], [type="image" i], [type="checkbox" i], [type="radio" 
     padding: 10px;
     box-sizing: border-box;
     height: 30px;
+}
+
+.custom-checkbox {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+    
+}
+
+.custom-checkbox+label {
+    display: inline-flex;
+    align-items: center;
+    user-select: none;
+    cursor: pointer;
+}
+.custom-checkbox+label::before {
+    content: '';
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    flex-grow: 0;
+    border: 1px solid #adb5bd;
+    border-radius: 0.25em;
+    margin-right: 0.5em;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 50% 50%;
+}
+
+.custom-checkbox:checked+label::before {
+    border-color: var(--accent);
+    background-color: var(--accent);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
 }
 
 nav .logo{
@@ -66,6 +124,17 @@ nav{
 }
 .sortings a{
     padding: 10px;
+    display: flex;
+    align-items: center;
+    user-select: none;
+}
+.sortings a *{
+    padding: 4px;
+}
+
+.sorting-selected{
+    color: var(--accent);
+    font-weight: 600;
 }
 
 nav > .container{
@@ -83,43 +152,59 @@ nav > .container{
 .cart-icon{
     width: 30px;
     height: 30px;
-    background-image: url(img/cart.png);
+    background-image: url(img/cart.svg);
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
+}
+
+.deleteBtn{
+    width: 1em;
+    height: 1em;
+    background-image: url(img/delete.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    cursor: pointer;
 }
 
 .cards{
     width: calc(8 * var(--col));
     display: flex;
     flex-wrap: wrap;
+    align-content: flex-start;
 }
 
-
-
 .card{
-    background-color: var(--bg);
+    background-color: var(--white);
     width: calc(4 * var(--col));
-    border-bottom: var(--secondary) 1px solid;
     border-radius: var(--round);
-
     display: flex;
-    max-height: calc(2 * var(--col));;
-    max-width: calc(50% - 20px);
+    justify-content: space-between;
+    max-height: calc(4 * var(--col));
+    min-height: 370px;
+    max-width: calc(25% - 20px);
     margin: 10px;
+    flex-direction: column;
+}
+.card:hover{
+    box-shadow: rgb(223, 223, 225) 0px 5px 25px;
 }
 
 .card > img{
     object-fit: contain;
-    width: 50%;
+    object-position: center;
+    width: 100%;
+    max-width: calc(100% - 20px);
+    max-height: 200px;
     padding: 10px;
 }
 
 .card-info{
     display: flex;
-    width: 50%;
     flex-direction: column;
     justify-content: space-between;
+    min-height: 130px;
     font-size: 16px;
     font-weight: 400;
     padding: 10px;
@@ -129,6 +214,8 @@ nav > .container{
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    justify-content: space-between;
+    min-height: 48px;
 }
 
 .price-old{
@@ -137,7 +224,7 @@ nav > .container{
     
 }
 .price-discount{
-    color: #665FD8;
+    color: var(--accent);
     font-size: 24px;
     font-weight: 600;
 }
@@ -154,6 +241,10 @@ nav > .container{
     font-size: 16px;
     font-weight: 700;
     word-wrap: break-word
+}
+
+.add-cart:hover, .apply-btn:hover{
+    background-color: var(--dark-primary);
 }
 
 .reset-btn{
@@ -173,7 +264,7 @@ nav > .container{
     max-width: calc(2 * var(--col) - 20px);
     padding: 10px;
     border-radius: var(--round);
-    background: #EAEDFA;
+    background: var(--bg2);
 }
 
 .filters > .title-heading{
@@ -225,18 +316,20 @@ body {
     top: 0px;
     /* указываем z-индекс для корректного наслаивания */
     z-index: 1;
+    overflow-y: scroll;
 }
 
 .modalActive {
     position: absolute;
-    width: calc(4 * var(--col) + 20px);
-    height: fit-content;
-    top: calc(50% - 250px);
+    /* width: calc(4 * var(--col) + 20px); */
+    /* height: fit-content; */
+    top: 80px;
+    margin-bottom: 80px;
     /* left: calc(50% - 175px); */
-    border-radius: 10px;
-    background-color: rgb(255, 255, 255);
+    border-radius: var(--round);
+    background-color: var(--bg);
     cursor: default;
-    padding: 40px 20px;
+    /* padding: 40px 20px; */
 }
 
 .modalClose {
@@ -247,13 +340,15 @@ body {
     width: 30px;
     height: 30px;
     cursor: pointer;
+    z-index: 10;
 }
 
 
 .modalWindow {
     position: relative;
     display: flex;
-    flex-direction: column;
+    overflow-x: hidden;
+    min-height: calc(100vh - 80px);
 }
 
 .modalCard {
@@ -271,10 +366,75 @@ body {
     border-radius: var(--round);
 }
 
-.cartElemInfo div:not(:first-child){
+.cartElemInfo div:not(:nth-child(2)){
     background-color: var(--primary);
     color: var(--bg);
     font-weight: 600;
     cursor: pointer;
     user-select: none;
+}
+
+.cartCards{
+    display: flex;
+    width: calc(8 * var(--col));
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+.cartCards > .card {
+    width: calc(100% - 20px);
+    max-width: 100%;
+    flex-direction: row;
+    min-height: auto;
+}
+.cartCards > .card > img {
+    max-width: 25%;
+    width: 25%;
+}
+
+.cartCards > .card > .card-info {
+    max-height: 220px;
+    flex-direction: row;
+    width: 100%;
+}
+
+.cartCards > .card > .card-info > .title {
+    width: 50%;
+    font-size: 1.3em;
+}
+
+.cartCardInfo{
+    width: 50%;
+    margin-left: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.3em;
+    align-items: flex-start;
+}
+
+.cartCardInfo > .cartElemInfo{
+    display: flex;
+    justify-content: space-between;
+    width: var(--col);
+    align-items: flex-start;
+}
+
+.cartCardInfo > .price-wrap {
+    align-items: flex-start;
+    justify-content: unset;
+}
+
+.cartCardInfo > .deleteBtn{
+    align-items: flex-start;
+}
+
+.orderInfoContainer{
+    margin: 10px;
+    width: var(--col);
+}
+.orderInfo{
+    padding: 10px;
+}
+
+.orderSum {
+    font-size: 1.3em;
 }
