@@ -55,7 +55,7 @@ let prods = [
     }
 ]
 
-let manufacturersList = [
+manufacturersList = [
     {
         title: "DEXP",
         checked: true
@@ -78,7 +78,6 @@ function clearCart(){
     cart = emptyCart;
     localStorage.setItem('cart', JSON.stringify(cart));
 }
-
 
 function checkForNullValues(arr) {
     for (var i = 0; i < arr.length; i++) {
@@ -224,7 +223,6 @@ function filter(data, filtersData) {
         }
         return true;
         });
-
     return filteredData;
 }
 
@@ -241,7 +239,7 @@ function showProds(){
     }
 
     if (notObject){
-        clearFilterData();
+        updateFilterData('clear');
     }
     filtersData = JSON.parse(localStorage.getItem('filters'));
     prodsShowed = filter(prods, filtersData)
@@ -295,6 +293,9 @@ function updateFilterData(mode){
                     prices.push(parseInt(prods[i].price));
                 }
             }
+
+            manufacturers = manufacturersList;
+
             localStorage.setItem('searchQuery', '')
             withDiscount = false;
             priceTo = Math.max(...prices.map(elem => parseInt(elem)));
@@ -312,7 +313,7 @@ function updateFilterData(mode){
             inputs.forEach((input, index) => {
                 manufacturers[index].checked = input.checked;
             });
-
+            
             priceFrom = document.getElementById('f-price-from').value;
             priceTo = document.getElementById('f-price-to').value;
             romFrom = document.getElementById('f-rom-from').value;
